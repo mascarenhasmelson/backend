@@ -1,0 +1,42 @@
+version: "3.8"  # Adjust the CPU, replicas, and memory settings as needed to suit your system's requirements; these values were configured for my setup.
+ 
+services:
+  mongodb:
+    image: mongo
+    networks:
+      - backend
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 512M
+      restart_policy:
+        condition: on-failure
+ 
+  rabbitmq:
+    image: rabbitmq  # Correct RabbitMQ management image name
+    networks:
+      - backend
+    ports:
+      - "5672:5672"
+      - "15672:15672"  # Management UI port
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
+      restart_policy:
+        condition: on-failure
+ 
+networks:
+  backend:
+    external: true
+
+volumes:
+  mongodb_data:
